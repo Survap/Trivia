@@ -6,7 +6,7 @@ namespace Trivia
 {
     public class Config
     {
-        public static string SavePath = Path.Combine(TShock.SavePath, "Trivia.json");
+        public static string SavePath = Path.Combine(TShock.SavePath, "trivia_config.json");
         public bool Enabled = true;
         public int QuestionInterval = 120;
         public int AnswerTime = 45;

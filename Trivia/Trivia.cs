@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Trivia
 {
-	[ApiVersion(2, 0)]
+	[ApiVersion(2, 1)]
 	public class Trivia : TerrariaPlugin
 	{
 		public static TriviaManager TriviaManager;
@@ -17,7 +17,7 @@ namespace Trivia
 		public override string Name => "Trivia";
 
 
-		public override string Description => "Trivia plugin for TShock";
+		public override string Description => "Trivia plugin for TShock (Updated by algrn912005)";
 
 		public Trivia(Main game)
 			: base(game)
@@ -29,7 +29,8 @@ namespace Trivia
 			Commands.ChatCommands.Add(new Command(Answer, "answer", "a"));
 			Commands.ChatCommands.Add(new Command("trivia.reload", Reload_Config, "triviareload"));
 
-			(TriviaManager = new TriviaManager()).Initialize();
+            TriviaManager = new TriviaManager();
+            TriviaManager.Initialize();
 		}
 		protected override void Dispose(bool disposing)
 		{
@@ -48,7 +49,7 @@ namespace Trivia
 			}
 			if (!TriviaManager.PendingAnswer)
 			{
-				args.Player.SendErrorMessage("Trivia isn't currently running!");
+				args.Player.SendErrorMessage("No trivia question is currently being asked!");
 				return;
 			}
 			string answer = string.Join(" ", args.Parameters);

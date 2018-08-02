@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 using TShockAPI;
-//using Wolfje.Plugins.SEconomy;
-//using Wolfje.Plugins.SEconomy.Journal;
 
 namespace Trivia
 {
     public class TriviaManager
     {
-		public Lang Language;
         public Config Config;
         public bool PendingAnswer { get { return QuestionAsked; } }
         private Timer _timer = new Timer(1000);
@@ -57,7 +54,6 @@ namespace Trivia
         public void Load_Config()
         {
             Config = new Config(Config.SavePath);
-			Language = new Lang();
             this.Enabled = Config.Enabled;
         }
 
@@ -88,8 +84,8 @@ namespace Trivia
             {
                 count = 0;
                 QuestionAsked = false;
-                WrongAnswers.Clear();
-                TSPlayer.All.SendErrorMessage(Language.TimeUpMessage);
+                TSPlayer.All.SendErrorMessage("[Trivia] Time's up!");
+                EndTriviaNoAnswers();
             }
         }
 
@@ -100,7 +96,7 @@ namespace Trivia
 
         private void AnnouceQuestion()
         {
-            TSPlayer.All.SendInfoMessage(Language.AnnounceQuestion);
+            TSPlayer.All.SendInfoMessage("[Trivia] Here comes a trivia question! Use /answer <ANSWER> or /a <ANSWER> to join.");
             TSPlayer.All.SendInfoMessage("[Trivia] " + CurrentQandA.Question);
         }
 
@@ -113,19 +109,22 @@ namespace Trivia
         public void EndTrivia(TSPlayer ts)
         {
             Reset();
-            TSPlayer.All.SendInfoMessage(string.Format("{0} answered the trivia correctly! the answer{1} {2}", ts.Name, CurrentQandA.Answers.Count > 1 ? "s were" : " was", string.Join(", ", CurrentQandA.Answers)));
+            TSPlayer.All.SendInfoMessage(string.Format("[Trivia] {0} answered the trivia correctly! the answer{1} {2}", ts.Name, CurrentQandA.Answers.Count > 1 ? "s were" : " was", string.Join(", ", CurrentQandA.Answers)));
             if (Config.DisplayWrongAnswers && WrongAnswers.Count > 0)
-                TSPlayer.All.SendErrorMessage(string.Format("Wrong answers were: {0}", string.Join(", ", WrongAnswers)));
+                TSPlayer.All.SendErrorMessage(string.Format("[Trivia] Wrong answers were: {0}", string.Join(", ", WrongAnswers)));
             WrongAnswers.Clear();
+        }
 
-            /*if (SEconomyPlugin.Instance != null)
-            {
-                IBankAccount Server = SEconomyPlugin.Instance.GetBankAccount(TSServerPlayer.Server.UserID);
-                IBankAccount Player = SEconomyPlugin.Instance.GetBankAccount(ts.Index);
-                Server.TransferToAsync(Player, Config.CurrencyAmount, BankAccountTransferOptions.AnnounceToReceiver, "answering the trivia question correctly", "Answered trivia question");
-            }
-            else
-                ts.SendErrorMessage("[Trivia] Transaction failed because SEconomy is disabled!");*/
+        public void EndTriviaNoAnswers()
+        {
+            Reset();
+            TSPlayer.All.SendInfoMessage(string.Format("[Trivia] No one answered the trivia correctly :( the answer{0} {1}", 
+                CurrentQandA.Answers.Count > 1 ? "s were" : " was", 
+                string.Join(", ", CurrentQandA.Answers)));
+
+            if (Config.DisplayWrongAnswers && WrongAnswers.Count > 0)
+                TSPlayer.All.SendErrorMessage(string.Format("[Trivia] Wrong answers were: {0}", string.Join(", ", WrongAnswers)));
+            WrongAnswers.Clear();
         }
     }
 }

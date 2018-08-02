@@ -8,7 +8,6 @@ namespace Trivia
 	public class QAndA
 	{
 		public string Question;
-
 		public string Answer;
 
 		[JsonIgnore]
